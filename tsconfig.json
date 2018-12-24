@@ -1,9 +1,11 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "jsx": "react",
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true
-  }
+    "compilerOptions": {
+        "target": "es2017",
+        "esModuleInterop": true,
+        "jsx": "react",
+        "allowJs": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noUnusedLocals": true
+    }
 }

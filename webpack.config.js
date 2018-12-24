@@ -1,5 +1,5 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: 'development',
@@ -9,25 +9,25 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
-            }
-        ]
+            },
+        ],
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js' ]
+        extensions: ['.tsx', '.ts', '.js'],
     },
     devServer: {
         host: 'editor.local',
         disableHostCheck: true,
-        https: false
+        https: false,
     },
     devtool: 'inline-source-map',
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Editor'
-        })
+            title: 'Editor',
+        }),
     ],
     // output: {
     //   filename: '[name].bundle.js',
     //   path: path.resolve(__dirname, 'dist')
     // }
-};
+}

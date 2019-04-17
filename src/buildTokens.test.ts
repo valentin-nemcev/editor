@@ -31,6 +31,20 @@ describe('buildTokens', () => {
         ])
     })
 
+    test('negative caret at empty line', () => {
+        expect(
+            buildTokens({
+                lines: [''],
+                caretPos: {line: 0, col: -1},
+            }),
+        ).toEqual([
+            [
+                {kind: 'string', offset: {line: 0, col: 0}, text: ''},
+                {kind: 'caret', offset: {line: 0, col: 0}},
+            ],
+        ])
+    })
+
     test('caret at the start of the line', () => {
         expect(
             buildTokens({

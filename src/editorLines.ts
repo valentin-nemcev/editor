@@ -77,6 +77,7 @@ function selectionToCaretPos(selection: Selection, offset: CaretPos) {
 
 interface EditorProps {
     setCaret: (pos: CaretPos) => void
+    moveCaret: (delta: CaretPos) => void
     lines: Token[][]
 }
 export class EditorLines extends React.Component<EditorProps, {}> {
@@ -84,10 +85,26 @@ export class EditorLines extends React.Component<EditorProps, {}> {
         this.props.setCaret(
             selectionToCaretPos(window.getSelection(), t.offset),
         )
+    onKeyDown = (e: React.KeyboardEvent) => {
+        e.preventDefault()
+        switch (e.key) {
+            case 'ArrowUp':
+                return this.props.moveCaret({line: -1, col: 0})
+            case 'ArrowDown':
+                return this.props.moveCaret({line: 1, col: 0})
+            case 'ArrowLeft':
+                return this.props.moveCaret({line: 0, col: -1})
+            case 'ArrowRight':
+                return this.props.moveCaret({line: 0, col: 1})
+        }
+        console.log(e.key, e.keyCode, e.charCode)
+    }
     render() {
         return e(
             'div',
             {
+                tabIndex: 0,
+                onKeyDown: this.onKeyDown,
                 className: css({
                     whiteSpace: 'pre',
                     fontFamily: 'monospace',

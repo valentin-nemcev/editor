@@ -33,10 +33,10 @@ export function buildTokens({
         else {
             const col = clamp(caretPos.col, 0, line.length)
             return compact([
-                (caretPos.col > 0 || line.length === 0) &&
+                (col > 0 || line.length === 0) &&
                     new StringToken({line: i, col: 0}, line.slice(0, col)),
                 new CaretToken({line: i, col}),
-                caretPos.col < line.length &&
+                col < line.length &&
                     new StringToken({line: i, col: col}, line.slice(col)),
             ])
         }

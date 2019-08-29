@@ -1,22 +1,22 @@
-import {clamp} from 'lodash'
+import {clamp} from 'lodash';
 
-import * as React from 'react'
-import {EditorLines} from './editorLines'
-import {buildTokens, CaretPos} from './buildTokens'
+import * as React from 'react';
+import {EditorLines} from './editorLines';
+import {buildTokens, CaretPos} from './buildTokens';
 
-const e = React.createElement
+const e = React.createElement;
 
 interface EditorProps {
-    initialText: string
+    initialText: string;
 }
 
 interface EditorState {
-    lines: string[]
-    caretPos: CaretPos
+    lines: string[];
+    caretPos: CaretPos;
 }
 
 export class Editor extends React.Component<EditorProps, EditorState> {
-    setCaret = (caretPos: CaretPos) => this.setState({caretPos})
+    setCaret = (caretPos: CaretPos) => this.setState({caretPos});
     moveCaret = (delta: CaretPos) =>
         this.setState(({lines, caretPos}) => ({
             caretPos: {
@@ -27,13 +27,14 @@ export class Editor extends React.Component<EditorProps, EditorState> {
                     Math.max(caretPos.col, (lines[caretPos.line] || '').length),
                 ),
             },
-        }))
+        }));
+
     constructor(props: EditorProps) {
-        super(props)
+        super(props);
         this.state = {
             lines: props.initialText.split('\n'),
             caretPos: {line: 3, col: 5},
-        }
+        };
     }
 
     render() {
@@ -41,6 +42,6 @@ export class Editor extends React.Component<EditorProps, EditorState> {
             lines: buildTokens(this.state),
             setCaret: this.setCaret,
             moveCaret: this.moveCaret,
-        })
+        });
     }
 }

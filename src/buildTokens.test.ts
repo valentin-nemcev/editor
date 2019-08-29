@@ -1,4 +1,4 @@
-import {buildTokens} from './buildTokens'
+import {buildTokens} from './buildTokens';
 
 describe('buildTokens', () => {
     test('multiple lines with caret', () => {
@@ -14,8 +14,8 @@ describe('buildTokens', () => {
                 {kind: 'caret', offset: {line: 1, col: 4}},
                 {kind: 'string', offset: {line: 1, col: 4}, text: '2'},
             ],
-        ])
-    })
+        ]);
+    });
 
     test('caret at empty line', () => {
         expect(
@@ -28,8 +28,8 @@ describe('buildTokens', () => {
                 {kind: 'string', offset: {line: 0, col: 0}, text: ''},
                 {kind: 'caret', offset: {line: 0, col: 0}},
             ],
-        ])
-    })
+        ]);
+    });
 
     test('negative caret at empty line', () => {
         expect(
@@ -42,8 +42,8 @@ describe('buildTokens', () => {
                 {kind: 'string', offset: {line: 0, col: 0}, text: ''},
                 {kind: 'caret', offset: {line: 0, col: 0}},
             ],
-        ])
-    })
+        ]);
+    });
 
     test('caret at the start of the line', () => {
         expect(
@@ -56,8 +56,8 @@ describe('buildTokens', () => {
                 {kind: 'caret', offset: {line: 0, col: 0}},
                 {kind: 'string', offset: {line: 0, col: 0}, text: 'line1'},
             ],
-        ])
-    })
+        ]);
+    });
 
     test('negative caret col', () => {
         expect(
@@ -70,8 +70,8 @@ describe('buildTokens', () => {
                 {kind: 'caret', offset: {line: 0, col: 0}},
                 {kind: 'string', offset: {line: 0, col: 0}, text: 'line1'},
             ],
-        ])
-    })
+        ]);
+    });
 
     test('caret past the end of the line', () => {
         expect(
@@ -84,6 +84,6 @@ describe('buildTokens', () => {
                 {kind: 'string', offset: {line: 0, col: 0}, text: 'line1'},
                 {kind: 'caret', offset: {line: 0, col: 5}},
             ],
-        ])
-    })
-})
+        ]);
+    });
+});

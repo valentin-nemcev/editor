@@ -1,21 +1,21 @@
-import * as React from 'react'
+import * as React from 'react';
 
-import {css} from 'emotion'
-import {Token, StringToken, CaretToken, CaretPos} from './buildTokens'
+import {css} from 'emotion';
+import {Token, StringToken, CaretToken, CaretPos} from './buildTokens';
 
-const e = React.createElement
+const e = React.createElement;
 
-const lineHeight = '1.4em'
+const lineHeight = '1.4em';
 
 function assertExaustive(arg: never): never {
-    throw new Error('Unexpected exaustive if or switch argument: ' + arg)
+    throw new Error('Unexpected exaustive if or switch argument: ' + arg);
 }
 
 function caretPosToKey(p: CaretPos): string {
-    return p.line + ':' + p.col
+    return p.line + ':' + p.col;
 }
 
-const zeroWidthSpace = '\u200B'
+const zeroWidthSpace = '\u200B';
 const render = {
     string(t: StringToken, props?: React.HTMLProps<any>): React.ReactNode {
         return e(
@@ -32,7 +32,7 @@ const render = {
                 }),
             },
             t.text || '\n',
-        )
+        );
     },
 
     caret(t: CaretToken, props?: React.HTMLProps<any>): React.ReactNode {
@@ -49,22 +49,22 @@ const render = {
                 }),
             },
             zeroWidthSpace,
-        )
+        );
     },
-}
+};
 
 function renderToken(
     t: Token,
     onClick: React.MouseEventHandler,
 ): React.ReactNode {
-    const key = caretPosToKey(t.offset) + t.kind
+    const key = caretPosToKey(t.offset) + t.kind;
     switch (t.kind) {
         case 'string':
-            return render.string(t, {key, onClick})
+            return render.string(t, {key, onClick});
         case 'caret':
-            return render.caret(t, {key, onClick})
+            return render.caret(t, {key, onClick});
         default:
-            assertExaustive(t)
+            assertExaustive(t);
     }
 }
 
@@ -72,33 +72,35 @@ function selectionToCaretPos(selection: Selection, offset: CaretPos) {
     return {
         line: offset.line,
         col: offset.col + selection.anchorOffset,
-    }
+    };
 }
 
 interface EditorProps {
-    setCaret: (pos: CaretPos) => void
-    moveCaret: (delta: CaretPos) => void
-    lines: Token[][]
+    setCaret: (pos: CaretPos) => void;
+    moveCaret: (delta: CaretPos) => void;
+    lines: Token[][];
 }
 export class EditorLines extends React.Component<EditorProps, {}> {
     onTokenClick = (e: React.MouseEvent, t: Token) =>
         this.props.setCaret(
             selectionToCaretPos(window.getSelection(), t.offset),
-        )
+        );
+
     onKeyDown = (e: React.KeyboardEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         switch (e.key) {
             case 'ArrowUp':
-                return this.props.moveCaret({line: -1, col: 0})
+                return this.props.moveCaret({line: -1, col: 0});
             case 'ArrowDown':
-                return this.props.moveCaret({line: 1, col: 0})
+                return this.props.moveCaret({line: 1, col: 0});
             case 'ArrowLeft':
-                return this.props.moveCaret({line: 0, col: -1})
+                return this.props.moveCaret({line: 0, col: -1});
             case 'ArrowRight':
-                return this.props.moveCaret({line: 0, col: 1})
+                return this.props.moveCaret({line: 0, col: 1});
         }
-        console.log(e.key, e.keyCode, e.charCode)
-    }
+        console.log(e.key, e.keyCode, e.charCode);
+    };
+
     render() {
         return e(
             'div',
@@ -125,6 +127,6 @@ export class EditorLines extends React.Component<EditorProps, {}> {
                     ),
                 ),
             ),
-        )
+        );
     }
 }

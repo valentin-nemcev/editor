@@ -16,8 +16,8 @@ interface EditorState {
 }
 
 export class Editor extends React.Component<EditorProps, EditorState> {
-    setCaret = (caretPos: CaretPos) => this.setState({caretPos});
-    moveCaret = (delta: CaretPos) =>
+    setCaret = (caretPos: CaretPos): void => this.setState({caretPos});
+    moveCaret = (delta: CaretPos): void =>
         this.setState(({lines, caretPos}) => ({
             caretPos: {
                 line: clamp(caretPos.line + delta.line, 0, lines.length - 1),
@@ -37,7 +37,7 @@ export class Editor extends React.Component<EditorProps, EditorState> {
         };
     }
 
-    render() {
+    render(): React.ReactElement {
         return e(EditorLines, {
             lines: buildTokens(this.state),
             setCaret: this.setCaret,

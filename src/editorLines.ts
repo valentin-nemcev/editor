@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-import {css} from 'emotion';
-import {Token, StringToken, CaretToken, CaretPos} from './buildTokens';
+import {jsx as e} from '@emotion/core';
 
-const e = React.createElement;
+import {Token, StringToken, CaretToken, CaretPos} from './buildTokens';
 
 const lineHeight = '1.4em';
 
@@ -17,36 +16,36 @@ function caretPosToKey(p: CaretPos): string {
 
 const zeroWidthSpace = '\u200B';
 const render = {
-    string(t: StringToken, props?: React.HTMLProps<any>): React.ReactNode {
+    string(t: StringToken, props?: React.HTMLProps<unknown>): React.ReactNode {
         return e(
             'span',
             {
                 ...props,
-                className: css({
+                css: {
                     display: 'inline-block',
                     flex: 0,
                     '&:last-child': {
                         marginRight: 'auto',
                         flex: 1,
                     },
-                }),
+                },
             },
             t.text || '\n',
         );
     },
 
-    caret(t: CaretToken, props?: React.HTMLProps<any>): React.ReactNode {
+    caret(t: CaretToken, props?: React.HTMLProps<unknown>): React.ReactNode {
         return e(
             'span',
             {
                 ...props,
-                className: css({
+                css: {
                     display: 'inline-block',
                     userSelect: 'none',
                     borderLeft: '1px solid black',
                     marginLeft: '-1px',
                     color: 'gray',
-                }),
+                },
             },
             zeroWidthSpace,
         );
@@ -68,7 +67,7 @@ function renderToken(
     }
 }
 
-function selectionToCaretPos(selection: Selection, offset: CaretPos) {
+function selectionToCaretPos(selection: Selection, offset: CaretPos): CaretPos {
     return {
         line: offset.line,
         col: offset.col + selection.anchorOffset,
@@ -81,12 +80,12 @@ interface EditorProps {
     lines: Token[][];
 }
 export class EditorLines extends React.Component<EditorProps, {}> {
-    onTokenClick = (e: React.MouseEvent, t: Token) =>
+    onTokenClick = (e: React.MouseEvent, t: Token): void =>
         this.props.setCaret(
-            selectionToCaretPos(window.getSelection(), t.offset),
+            selectionToCaretPos(window.getSelection() as Selection, t.offset),
         );
 
-    onKeyDown = (e: React.KeyboardEvent) => {
+    onKeyDown = (e: React.KeyboardEvent): void => {
         e.preventDefault();
         switch (e.key) {
             case 'ArrowUp':
@@ -101,26 +100,26 @@ export class EditorLines extends React.Component<EditorProps, {}> {
         console.log(e.key, e.keyCode, e.charCode);
     };
 
-    render() {
+    render(): React.ReactElement {
         return e(
             'div',
             {
                 tabIndex: 0,
                 onKeyDown: this.onKeyDown,
-                className: css({
+                css: {
                     whiteSpace: 'pre',
                     fontFamily: 'monospace',
-                }),
+                },
             },
             this.props.lines.map((tokens, i) =>
                 e(
                     'div',
                     {
                         key: i,
-                        className: css({
+                        css: {
                             display: 'flex',
                             lineHeight,
-                        }),
+                        },
                     },
                     tokens.map(token =>
                         renderToken(token, e => this.onTokenClick(e, token)),

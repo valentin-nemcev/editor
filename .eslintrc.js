@@ -1,3 +1,6 @@
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const {join} = require('path');
 
 module.exports = {
@@ -13,16 +16,23 @@ module.exports = {
     plugins: ['@typescript-eslint', 'json', 'react', 'prettier', 'jest'],
     extends: [
         'standard',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        'plugin:jest/recommended',
+        'plugin:prettier/recommended',
         'prettier/@typescript-eslint',
         'plugin:prettier/recommended',
         'prettier/standard',
-        'plugin:jest/recommended',
     ],
     env: {
         browser: true,
         es6: true,
     },
     rules: {
+        'no-useless-constructor': 'off',
+        '@typescript-eslint/no-useless-constructor': 'error',
+
         'prettier/prettier': [
             'warn',
             {

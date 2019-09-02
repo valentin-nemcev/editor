@@ -1,47 +1,26 @@
-import {clamp} from 'lodash';
-
 import * as React from 'react';
+import {connect} from 'react-redux';
+
+import {RootState} from './store';
+import {setCaret, moveCaret} from './actions';
 import {EditorLines} from './editorLines';
-import {buildTokens, CaretPos} from './buildTokens';
+import {buildTokens} from './buildTokens';
 
 const e = React.createElement;
 
-interface EditorProps {
-    initialText: string;
-}
+const mapStateToProps = (state: RootState) => ({lines: buildTokens(state)});
+const dispatchProps = {setCaret, moveCaret};
 
-interface EditorState {
-    lines: string[];
-    caretPos: CaretPos;
-}
+type Props = ReturnType<typeof mapStateToProps> & typeof dispatchProps;
 
-export class Editor extends React.Component<EditorProps, EditorState> {
-    setCaret = (caretPos: CaretPos): void => this.setState({caretPos});
-    moveCaret = (delta: CaretPos): void =>
-        this.setState(({lines, caretPos}) => ({
-            caretPos: {
-                line: clamp(caretPos.line + delta.line, 0, lines.length - 1),
-                col: clamp(
-                    caretPos.col + delta.col,
-                    0,
-                    Math.max(caretPos.col, (lines[caretPos.line] || '').length),
-                ),
-            },
-        }));
+const Editor = ({lines, setCaret, moveCaret}: Props) =>
+    e(EditorLines, {
+        lines,
+        setCaret,
+        moveCaret,
+    });
 
-    constructor(props: EditorProps) {
-        super(props);
-        this.state = {
-            lines: props.initialText.split('\n'),
-            caretPos: {line: 3, col: 5},
-        };
-    }
-
-    render(): React.ReactElement {
-        return e(EditorLines, {
-            lines: buildTokens(this.state),
-            setCaret: this.setCaret,
-            moveCaret: this.moveCaret,
-        });
-    }
-}
+export default connect(
+    mapStateToProps,
+    dispatchProps,
+)(Editor);

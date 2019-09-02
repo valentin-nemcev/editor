@@ -33,6 +33,8 @@ module.exports = {
         'no-useless-constructor': 'off',
         '@typescript-eslint/no-useless-constructor': 'error',
 
+        '@typescript-eslint/explicit-function-return-type': 'off',
+
         'prettier/prettier': [
             'warn',
             {

@@ -1,7 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
 
-import {Editor} from './editor';
+import {createRootReducer} from './store';
+import Editor from './editor';
 
 const e = React.createElement;
 
@@ -17,7 +20,9 @@ test('basic again', () => {
 })
 `.trim();
 
+const store = createStore(createRootReducer(sampleText));
+
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 
-ReactDOM.render(e(Editor, {initialText: sampleText}), appContainer);
+ReactDOM.render(e(Provider, {store}, e(Editor, {})), appContainer);

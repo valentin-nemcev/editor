@@ -16,6 +16,7 @@ module.exports = {
     plugins: ['@typescript-eslint', 'json', 'react', 'prettier', 'jest'],
     extends: [
         'standard',
+        'plugin:react/recommended',
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
@@ -25,6 +26,11 @@ module.exports = {
         'plugin:prettier/recommended',
         'prettier/standard',
     ],
+    settings: {
+        react: {
+            version: 'detect',
+        },
+    },
     env: {
         browser: true,
         es6: true,
@@ -34,6 +40,16 @@ module.exports = {
         '@typescript-eslint/no-useless-constructor': 'error',
 
         '@typescript-eslint/explicit-function-return-type': 'off',
+
+        'react/prop-types': 'off',
+
+        '@typescript-eslint/no-unused-vars': [
+            'error',
+            {
+                varsIgnorePattern: '^_',
+                argsIgnorePattern: '^_',
+            },
+        ],
 
         'prettier/prettier': [
             'warn',

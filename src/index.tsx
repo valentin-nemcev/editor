@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 
-import {createRootReducer} from './store';
+import reducer from './reducer';
 import Editor from './editor';
 
 const e = React.createElement;
@@ -20,7 +20,10 @@ test('basic again', () => {
 })
 `.trim();
 
-const store = createStore(createRootReducer(sampleText));
+const store = createStore(reducer, {
+    lines: sampleText.split('\n'),
+    caretPos: {line: 3, col: 5},
+});
 
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);

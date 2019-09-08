@@ -1,11 +1,11 @@
-import {createReducer, StateType, ActionType, Reducer} from 'typesafe-actions';
+import {createReducer, StateType, ActionType} from 'typesafe-actions';
 import assert from 'power-assert';
 import {clamp} from 'lodash';
 
 import * as actions from './actions';
 import {CaretPos} from './buildTokens';
 
-type RootAction = ActionType<typeof actions>;
+export type RootAction = ActionType<typeof actions>;
 
 type Lines = string[];
 interface EditorState {
@@ -55,7 +55,7 @@ function moveCaretPos(
     return caretPos;
 }
 
-const reducerHandlers = createReducer<EditorState, RootAction>({
+const actionReducer = createReducer<EditorState, RootAction>({
     lines: [],
     caretPos: {line: 0, col: 0},
 })
@@ -83,11 +83,12 @@ const assertStateInvariants = (state: EditorState): void => {
     }
 };
 
-const reducer: Reducer<EditorState, RootAction> = (state, action) => {
-    state = reducerHandlers(state, action);
+const reducer: typeof actionReducer = (state, action) => {
+    state = actionReducer(state, action);
     assertStateInvariants(state);
     return state;
 };
+reducer.handlers = actionReducer.handlers;
 
 export type RootState = StateType<ReturnType<typeof reducer>>;
 export default reducer;

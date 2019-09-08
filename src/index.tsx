@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {createStore} from 'redux';
-import {Provider} from 'react-redux';
+import {Provider, ProviderProps} from 'react-redux';
 
-import reducer from './reducer';
-import Editor from './editor';
+import reducer, {RootAction} from './reducer';
+import Editor from './Editor';
 
 const e = React.createElement;
 
@@ -28,4 +28,11 @@ const store = createStore(reducer, {
 const appContainer = document.createElement('div');
 document.body.appendChild(appContainer);
 
-ReactDOM.render(e(Provider, {store}, e(Editor, {})), appContainer);
+ReactDOM.render(
+    e(
+        Provider as React.ComponentClass<ProviderProps<RootAction>>,
+        {store},
+        e(Editor, {}),
+    ),
+    appContainer,
+);

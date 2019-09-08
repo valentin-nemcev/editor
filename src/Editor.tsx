@@ -69,6 +69,8 @@ function Editor() {
         setCaretAction: setCaret,
         moveCaretAction: moveCaret,
     } = bindActionCreators({setCaretAction, moveCaretAction}, useDispatch());
+    const dispatch = useDispatch();
+
     return (
         <div
             tabIndex={0}

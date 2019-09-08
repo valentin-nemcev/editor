@@ -27,11 +27,11 @@ export function buildTokens({
     lines: string[];
     caretPos: CaretPos;
 }): Token[][] {
-    return lines.map((line, i) => {
+    const tokens = lines.map((line, i) => {
         if (caretPos.line !== i)
             return [new StringToken({line: i, col: 0}, line)];
         else {
-            const col = clamp(caretPos.col, 0, line.length);
+            const col = clamp(caretPos.col, line.length);
             return compact([
                 (col > 0 || line.length === 0) &&
                     new StringToken({line: i, col: 0}, line.slice(0, col)),
@@ -41,4 +41,7 @@ export function buildTokens({
             ]);
         }
     });
+    if (caretPos.line >= lines.length)
+        tokens.push([new CaretToken({line: lines.length, col: 0})]);
+    return tokens;
 }

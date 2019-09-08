@@ -1,8 +1,11 @@
-import {createReducer, StateType, ActionType} from 'typesafe-actions';
+import {createReducer, StateType, ActionType, Reducer} from 'typesafe-actions';
+import assert from 'power-assert';
 import {clamp} from 'lodash';
 
 import * as actions from './actions';
 import {CaretPos} from './buildTokens';
+
+type RootAction = ActionType<typeof actions>;
 
 type Lines = string[];
 interface EditorState {
@@ -35,19 +38,24 @@ const setCaretPos = clampCaretPos;
 
 function moveCaretPos(
     caretPos: CaretPos,
-    delta: CaretPos,
+    {line, col}: CaretPos,
     lines: Lines,
 ): CaretPos {
-    const colPastEnd = delta.col === 0;
-    const {line, col} = clampCaretPos(caretPos, lines, {colPastEnd});
-    return clampCaretPos(
-        {line: line + delta.line, col: col + delta.col},
-        lines,
-        {colPastEnd},
-    );
+    function moveCaretColOrLine(delta: CaretPos): CaretPos {
+        const colPastEnd = delta.col === 0;
+        const {line, col} = clampCaretPos(caretPos, lines, {colPastEnd});
+        return clampCaretPos(
+            {line: line + delta.line, col: col + delta.col},
+            lines,
+            {colPastEnd},
+        );
+    }
+    if (line !== 0) caretPos = moveCaretColOrLine({line, col: 0});
+    if (col !== 0) caretPos = moveCaretColOrLine({line: 0, col});
+    return caretPos;
 }
 
-const reducer = createReducer<EditorState, ActionType<typeof actions>>({
+const reducerHandlers = createReducer<EditorState, RootAction>({
     lines: [],
     caretPos: {line: 0, col: 0},
 })
@@ -62,6 +70,24 @@ const reducer = createReducer<EditorState, ActionType<typeof actions>>({
             caretPos: moveCaretPos(caretPos, delta, lines),
         }),
     );
+
+const assertStateInvariants = (state: EditorState): void => {
+    const {caretPos} = state;
+    try {
+        assert(caretPos.line >= 0);
+        assert(caretPos.col >= 0);
+    } catch (e) {
+        if (process.env.NODE_ENV !== 'test')
+            throw new Error('Assertion failed \n' + e.message);
+        else throw e;
+    }
+};
+
+const reducer: Reducer<EditorState, RootAction> = (state, action) => {
+    state = reducerHandlers(state, action);
+    assertStateInvariants(state);
+    return state;
+};
 
 export type RootState = StateType<ReturnType<typeof reducer>>;
 export default reducer;

@@ -69,6 +69,17 @@ const actionReducer = createReducer<EditorState, RootAction>({
             lines,
             caretPos: moveCaretPos(caretPos, delta, lines),
         }),
+    )
+    .handleAction(
+        actions.insertCharAction,
+        ({lines, caretPos: {line, col}}, {payload: char}) => ({
+            lines: [
+                ...lines.slice(0, line),
+                lines[line].slice(0, col) + char + lines[line].slice(col),
+                ...lines.slice(line + 1),
+            ],
+            caretPos: {line, col},
+        }),
     );
 
 const assertStateInvariants = (state: EditorState): void => {

@@ -1,45 +1,37 @@
 import * as React from 'react';
 import {jsx} from '@emotion/core';
 import {useSelector, useDispatch} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import {Dispatch} from 'redux';
 
-import {setCaretAction, moveCaretAction} from './actions';
 import tokens from './tokens';
 import {buildTokens, CaretPos, Token as TokenType} from './buildTokens';
+import {setCaretAction} from './actions';
+import keymap, {eventToKey} from './keymap';
 
 const lineHeight = '1.4em';
 
-const clickToAction = (
-    setCaret: (p: CaretPos) => unknown,
-    t: TokenType,
-) => (): void => {
+const clickToAction = (dispatch: Dispatch, t: TokenType) => (): void => {
     const selection = window.getSelection();
     if (!selection) return;
-    setCaret({
-        line: t.offset.line,
-        col: t.offset.col + selection.anchorOffset,
-    });
+    dispatch(
+        setCaretAction({
+            line: t.offset.line,
+            col: t.offset.col + selection.anchorOffset,
+        }),
+    );
 };
 
-const keyToAction = (moveCaret: (p: CaretPos) => unknown) => (
-    e: React.KeyboardEvent,
-): void => {
+const keyToAction = (dispatch: Dispatch) => (e: React.KeyboardEvent): void => {
     e.preventDefault();
-    switch (e.key) {
-        case 'ArrowUp':
-            moveCaret({line: -1, col: 0});
-            break;
-        case 'ArrowDown':
-            moveCaret({line: 1, col: 0});
-            break;
-        case 'ArrowLeft':
-            moveCaret({line: 0, col: -1});
-            break;
-        case 'ArrowRight':
-            moveCaret({line: 0, col: 1});
-            break;
-    }
-    console.log(e.key, e.keyCode, e.charCode);
+    const native = e.nativeEvent;
+    keymap(native, dispatch);
+    console.log(
+        eventToKey(native),
+        native,
+        native.key,
+        Array.from(native.key),
+        native.code,
+    );
 };
 
 function assertExaustive(arg: never): never {
@@ -50,9 +42,9 @@ function getTokenKey({kind, offset}: TokenType): string {
     return offset.line + ':' + offset.col + kind;
 }
 
-type Props = {token: TokenType; setCaret: (pos: CaretPos) => void};
-const TokenComponent: React.FC<Props> = ({token, setCaret}) => {
-    const onClick = clickToAction(setCaret, token);
+type Props = {token: TokenType};
+const TokenComponent: React.FC<Props> = ({token}) => {
+    const onClick = clickToAction(useDispatch(), token);
     switch (token.kind) {
         case 'string':
             return jsx(tokens.StringTokenComponent, {token, onClick});
@@ -65,16 +57,12 @@ const TokenComponent: React.FC<Props> = ({token, setCaret}) => {
 
 function Editor() {
     const lines = useSelector(buildTokens);
-    const {
-        setCaretAction: setCaret,
-        moveCaretAction: moveCaret,
-    } = bindActionCreators({setCaretAction, moveCaretAction}, useDispatch());
     const dispatch = useDispatch();
 
     return (
         <div
             tabIndex={0}
-            onKeyDown={keyToAction(moveCaret)}
+            onKeyDown={keyToAction(dispatch)}
             css={{whiteSpace: 'pre', fontFamily: 'monospace'}}
         >
             {lines.map((tokens, i) => (
@@ -83,7 +71,6 @@ function Editor() {
                         <TokenComponent
                             key={getTokenKey(token)}
                             token={token}
-                            setCaret={setCaret}
                         />
                     ))}
                 </div>

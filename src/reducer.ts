@@ -1,6 +1,6 @@
 import {createReducer, StateType, ActionType} from 'typesafe-actions';
 import assert from 'power-assert';
-import {clamp, last} from 'lodash';
+import {clamp} from 'lodash';
 
 import * as actions from './actions';
 import {CaretPos} from './buildTokens';
@@ -108,7 +108,42 @@ const actionReducer = createReducer<EditorState, RootAction>({
             );
             return {lines: updatedLines, caretPos: updatedCaretPos};
         },
-    );
+    )
+    .handleAction(
+        actions.deleteCharsAction,
+        ({lines, caretPos}, {payload: deltaCol}) => {
+            const {min, max} = Math;
+            caretPos = clampCaretPos(caretPos, lines);
+            const line = lines[caretPos.line];
+            const startPos = max(0, caretPos.col + min(deltaCol, 0));
+            const endPos = caretPos.col + max(deltaCol, 0);
+            const updatedLines = [
+                ...lines.slice(0, caretPos.line),
+                line.slice(0, startPos) + line.slice(endPos),
+                ...lines.slice(caretPos.line + 1),
+            ];
+            return {
+                lines: updatedLines,
+                caretPos: {line: caretPos.line, col: startPos},
+            };
+        },
+    )
+    .handleAction(actions.openLineAction, ({lines, caretPos}) => ({
+        lines: [
+            ...lines.slice(0, caretPos.line + 1),
+            '',
+            ...lines.slice(caretPos.line + 1),
+        ],
+        caretPos: {line: caretPos.line + 1, col: 0},
+    }))
+    .handleAction(actions.joinLinesAction, ({lines, caretPos}) => ({
+        lines: [
+            ...lines.slice(0, caretPos.line),
+            lines.slice(caretPos.line, caretPos.line + 2).join(''),
+            ...lines.slice(caretPos.line + 2),
+        ],
+        caretPos,
+    }));
 
 const assertStateInvariants = (state: EditorState): void => {
     const {lines, caretPos} = state;

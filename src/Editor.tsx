@@ -25,13 +25,6 @@ const keyToAction = (dispatch: Dispatch) => (e: React.KeyboardEvent): void => {
     e.preventDefault();
     const native = e.nativeEvent;
     keymap(native, dispatch);
-    console.log(
-        eventToKey(native),
-        native,
-        native.key,
-        Array.from(native.key),
-        native.code,
-    );
 };
 
 function assertExaustive(arg: never): never {

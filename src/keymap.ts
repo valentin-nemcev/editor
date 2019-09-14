@@ -47,7 +47,7 @@ function keymap(
         return;
     }
     if (key.char != null) {
-        dispatch(actions.insertCharAction(key.char));
+        dispatch(actions.insertCharsAction(key.char));
     }
 }
 export default keymap;

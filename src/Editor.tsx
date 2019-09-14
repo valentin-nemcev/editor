@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Dispatch} from 'redux';
 
 import tokens from './tokens';
-import {buildTokens, CaretPos, Token as TokenType} from './buildTokens';
+import {buildTokens, Token as TokenType} from './buildTokens';
 import {setCaretAction} from './actions';
 import keymap, {eventToKey} from './keymap';
 

@@ -1,6 +1,6 @@
 import {createReducer, StateType, ActionType} from 'typesafe-actions';
 import assert from 'power-assert';
-import {clamp} from 'lodash';
+import {clamp, last} from 'lodash';
 
 import * as actions from './actions';
 import {CaretPos} from './buildTokens';
@@ -55,6 +55,34 @@ function moveCaretPos(
     return caretPos;
 }
 
+function insertChars(
+    lines: Lines,
+    {line, col}: CaretPos,
+    chars: string,
+): {updatedLines: Lines; updatedCaretPos: CaretPos} {
+    const insertedLines = chars.split('\n');
+    const insertedCount = insertedLines.length - 1;
+
+    const charsBefore = lines[line].slice(0, col);
+    const charsAfter = lines[line].slice(col);
+
+    insertedLines[0] = charsBefore + insertedLines[0];
+    const updatedCol = insertedLines[insertedCount].length;
+    insertedLines[insertedCount] = insertedLines[insertedCount] + charsAfter;
+
+    const updatedLines = [
+        ...lines.slice(0, line),
+        ...insertedLines,
+        ...lines.slice(line + 1),
+    ];
+    const updatedCaretPos = setCaretPos(
+        {line: line + insertedCount, col: updatedCol},
+        updatedLines,
+    );
+
+    return {updatedCaretPos, updatedLines};
+}
+
 const actionReducer = createReducer<EditorState, RootAction>({
     lines: [],
     caretPos: {line: 0, col: 0},
@@ -71,22 +99,25 @@ const actionReducer = createReducer<EditorState, RootAction>({
         }),
     )
     .handleAction(
-        actions.insertCharAction,
-        ({lines, caretPos: {line, col}}, {payload: char}) => ({
-            lines: [
-                ...lines.slice(0, line),
-                lines[line].slice(0, col) + char + lines[line].slice(col),
-                ...lines.slice(line + 1),
-            ],
-            caretPos: {line, col},
-        }),
+        actions.insertCharsAction,
+        ({lines, caretPos}, {payload: chars}) => {
+            const {updatedCaretPos, updatedLines} = insertChars(
+                lines,
+                caretPos,
+                chars,
+            );
+            return {lines: updatedLines, caretPos: updatedCaretPos};
+        },
     );
 
 const assertStateInvariants = (state: EditorState): void => {
-    const {caretPos} = state;
+    const {lines, caretPos} = state;
     try {
         assert(caretPos.line >= 0);
         assert(caretPos.col >= 0);
+        lines.forEach((line, i) =>
+            assert(!line.includes('\n'), `Line ${i} contains newlines`),
+        );
     } catch (e) {
         if (process.env.NODE_ENV !== 'test')
             throw new Error('Assertion failed \n' + e.message);

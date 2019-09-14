@@ -75,3 +75,45 @@ describe('caret pos reducer', () => {
         expect(caretPos).toEqual({line: 0, col: 3});
     });
 });
+
+describe('char insert reducer', () => {
+    it('inserts chars and moves caret', () => {
+        const state = {lines: ['aaaacccc'], caretPos: {line: 0, col: 4}};
+        const {lines, caretPos} = reducer(
+            state,
+            actions.insertCharsAction('bbb'),
+        );
+        expect(lines).toEqual(['aaaabbbcccc']);
+        expect(caretPos).toEqual({line: 0, col: 7});
+    });
+
+    it('appends chars and moves caret', () => {
+        const state = {lines: ['aaabbb'], caretPos: {line: 0, col: 8}};
+        const {lines, caretPos} = reducer(
+            state,
+            actions.insertCharsAction('ccc'),
+        );
+        expect(lines).toEqual(['aaabbbccc']);
+        expect(caretPos).toEqual({line: 0, col: 9});
+    });
+
+    it('prepends chars and moves caret', () => {
+        const state = {lines: ['bbbccc'], caretPos: {line: 0, col: 0}};
+        const {lines, caretPos} = reducer(
+            state,
+            actions.insertCharsAction('aaa'),
+        );
+        expect(lines).toEqual(['aaabbbccc']);
+        expect(caretPos).toEqual({line: 0, col: 3});
+    });
+
+    it('inserts new lines', () => {
+        const state = {lines: ['aaccc', 'ddd'], caretPos: {line: 0, col: 2}};
+        const {lines, caretPos} = reducer(
+            state,
+            actions.insertCharsAction('\nbbb'),
+        );
+        expect(lines).toEqual(['aa', 'bbbccc', 'ddd']);
+        expect(caretPos).toEqual({line: 1, col: 3});
+    });
+});

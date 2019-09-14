@@ -30,23 +30,18 @@ function keymap(
 ): void {
     const key = eventToKey(e);
     if (!key) return;
-    const controlAction = (() => {
-        switch (key.name) {
-            case 'ArrowUp':
-                return actions.moveCaretAction({line: -1, col: 0});
-            case 'ArrowDown':
-                return actions.moveCaretAction({line: 1, col: 0});
-            case 'ArrowLeft':
-                return actions.moveCaretAction({line: 0, col: -1});
-            case 'ArrowRight':
-                return actions.moveCaretAction({line: 0, col: 1});
-        }
-    })();
-    if (controlAction) {
-        dispatch(controlAction);
-        return;
-    }
-    if (key.char != null) {
+    const map: {[key: string]: ActionType<typeof actions>} = {
+        ArrowUp: actions.moveCaretAction({line: -1, col: 0}),
+        ArrowDown: actions.moveCaretAction({line: 1, col: 0}),
+        ArrowLeft: actions.moveCaretAction({line: 0, col: -1}),
+        ArrowRight: actions.moveCaretAction({line: 0, col: 1}),
+
+        Enter: actions.insertCharsAction('\n'),
+    };
+
+    if (key.name && key.name in map) {
+        dispatch(map[key.name]);
+    } else if (key.char != null) {
         dispatch(actions.insertCharsAction(key.char));
     }
 }

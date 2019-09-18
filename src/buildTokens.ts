@@ -1,21 +1,22 @@
 import {compact, clamp} from 'lodash';
+import {CaretPos} from './state';
 
-export type CaretPos = {line: number; col: number};
 export type TokenKind = 'string' | 'caret';
 
-class BaseToken {
+abstract class BaseToken {
+    abstract kind: TokenKind;
     constructor(public offset: CaretPos) {}
 }
 
 export class StringToken extends BaseToken {
-    kind: 'string' = 'string';
+    kind = 'string' as const;
     constructor(offset: CaretPos, public text: string) {
         super(offset);
     }
 }
 
 export class CaretToken extends BaseToken {
-    kind: 'caret' = 'caret';
+    kind = 'caret' as const;
 }
 
 export type Token = StringToken | CaretToken;

@@ -5,7 +5,9 @@ type CaretPos = {line: number; col: number};
 type Lines = string[];
 interface EditorState {
     lines: Lines;
-    caretPos: CaretPos;
+    selectionBeginPos: CaretPos;
+    selectionEndPos: CaretPos;
+    currentSelectionSide: 'begin' | 'end';
 }
 
 function clampCaretPos(
